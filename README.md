@@ -1,4 +1,5 @@
 # Cordova Push Notifications Plugin for Android and iOS
+> (Oct 7, 2013) - Modified to add compatibility for Push Notifications sent by [Kinvey](http://www.kinvey.com).
 
 ---
 
@@ -427,3 +428,7 @@ Huge thanks to Mark Nutter whose [GCM-Cordova plugin](https://github.com/marknut
 Likewise, the iOS side was inspired by Olivier Louvignes' [Cordova PushNotification Plugin](https://github.com/phonegap/phonegap-plugins/tree/master/iOS/PushNotification) (Copyright (c) 2012 Olivier Louvignes) for iOS.
 
 Props to [Tobias Hößl](https://github.com/CatoTH), who provided the code to surface the full JSON object up to the JS layer.
+
+## License
+
+See the [LICENSE](LICENSE.txt) file.
