@@ -99,7 +99,7 @@
 }
 */
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+- (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 
     NSMutableDictionary *results = [NSMutableDictionary dictionary];
     NSString *token = [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<"withString:@""]
