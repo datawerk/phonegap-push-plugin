@@ -91,14 +91,6 @@
 		[self notificationReceived];	// go ahead and process it
 }
 
-/*
-- (void)isEnabled:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options {
-    UIRemoteNotificationType type = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-    NSString *jsStatement = [NSString stringWithFormat:@"navigator.PushPlugin.isEnabled = %d;", type != UIRemoteNotificationTypeNone];
-    NSLog(@"JSStatement %@",jsStatement);
-}
-*/
-
 - (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 
     NSMutableDictionary *results = [NSMutableDictionary dictionary];
@@ -158,43 +150,28 @@
 
     if (notificationMessage && self.callback)
     {
-        NSMutableString *jsonStr = [NSMutableString stringWithString:@"{"];
-
-        [self parseDictionary:notificationMessage intoJSON:jsonStr];
-
+        NSMutableDictionary * md = [notificationMessage mutableCopy];
+        self.notificationMessage = nil;
+        
         if (isInline)
         {
-            [jsonStr appendFormat:@"foreground:'%d',", 1];
+            [md setObject:[NSNumber numberWithInt:1] forKey:@"foreground"];
             isInline = NO;
         }
 		else
-            [jsonStr appendFormat:@"foreground:'%d',", 0];
+            [md setObject:[NSNumber numberWithInt:0] forKey:@"foreground"];
         
-        [jsonStr appendString:@"}"];
+        NSError * err;
+        NSData * jsonData = [NSJSONSerialization dataWithJSONObject:md options:0 error:&err];
+        NSString * jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        
+        NSLog(@"Msg: %@", jsonString);
 
-        NSLog(@"Msg: %@", jsonStr);
+        NSString * jsCallBack = [NSString stringWithFormat:@"%@(%@);", self.callback, jsonString];
+        
+        NSLog(@"Callback: %@", jsCallBack);
 
-        NSString * jsCallBack = [NSString stringWithFormat:@"%@(%@);", self.callback, jsonStr];
         [self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
-        
-        self.notificationMessage = nil;
-    }
-}
-
-// reentrant method to drill down and surface all sub-dictionaries' key/value pairs into the top level json
--(void)parseDictionary:(NSDictionary *)inDictionary intoJSON:(NSMutableString *)jsonString
-{
-    NSArray         *keys = [inDictionary allKeys];
-    NSString        *key;
-    
-    for (key in keys)
-    {
-        id thisObject = [inDictionary objectForKey:key];
-    
-        if ([thisObject isKindOfClass:[NSDictionary class]])
-            [self parseDictionary:thisObject intoJSON:jsonString];
-        else
-            [jsonString appendFormat:@"%@:'%@',", key, [inDictionary objectForKey:key]];
     }
 }
 
