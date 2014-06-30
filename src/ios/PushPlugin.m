@@ -151,7 +151,6 @@
     if (notificationMessage && self.callback)
     {
         NSMutableDictionary * md = [notificationMessage mutableCopy];
-        self.notificationMessage = nil;
         
         if (isInline)
         {
@@ -172,6 +171,7 @@
         NSLog(@"Callback: %@", jsCallBack);
 
         [self.webView stringByEvaluatingJavaScriptFromString:jsCallBack];
+        self.notificationMessage = nil;
     }
 }
 
